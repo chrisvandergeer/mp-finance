@@ -1,4 +1,4 @@
-package nl.cge.mpfinance;
+package nl.cge.mpfinance.rest;
 
 import jakarta.ws.rs.ApplicationPath;
 import jakarta.ws.rs.core.Application;

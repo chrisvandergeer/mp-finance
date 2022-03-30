@@ -39,4 +39,27 @@
 
     <!-- Default SSL configuration enables trust for default certificates from the Java runtime -->
     <ssl id="defaultSSLConfig" trustDefaultCerts="true" />
+
+    <dataSource id="DefaultDataSource"
+                jndiName="jdbc/financedb"
+                jdbcDriverRef="postgresql-driver"
+                type="javax.sql.ConnectionPoolDataSource"
+                transactional="true">
+
+        <properties serverName="localhost"
+                    portNumber="5432"
+                    databaseName="chris"
+                    user="chris"
+                    password="chris"/>
+    </dataSource>
+
+    <jdbcDriver id="postgresql-driver"
+                javax.sql.XADataSource="org.postgresql.xa.PGXADataSource"
+                javax.sql.ConnectionPoolDataSource="org.postgresql.ds.PGConnectionPoolDataSource"
+                libraryRef="postgresql-library"/>
+
+    <library id="postgresql-library">
+        <fileset id="PostgreSQLFileset" dir="jdbc"
+                 includes="postgresql-42.3.3.jar"/>
+    </library>
 </server>
