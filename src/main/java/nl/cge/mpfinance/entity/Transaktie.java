@@ -2,27 +2,31 @@ package nl.cge.mpfinance.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.Accessors;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
 import static nl.cge.mpfinance.entity.Transaktie.*;
 
+@Accessors(chain = true)
 @Getter
 @Setter
-@ToString
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
 @Entity
+@Table(
+        indexes = {
+                @Index(name = "idx_transaktie_naamTegenpartij", columnList = "naamTegenpartij")
+        }
+)
 @NamedQueries({
         @NamedQuery(
                 name = JQPL_FIND_TRANSAKTIES,
-                query = "select t from Transaktie t"),
+                query = "select t from Transaktie t order by t.datum desc"),
         @NamedQuery(
                 name = JPQL_FIND_GELIJKSOORTIGE_TRANSAKTIES,
                 query = "select t from Transaktie t where t.naamTegenpartij = " +
-                        "(select it.naamTegenpartij from Transaktie it where it.volgnr = :volgnummer)"
+                        "(select it.naamTegenpartij from Transaktie it where it.volgnr = :volgnummer) " +
+                        "order by t.datum desc"
         )
 })
 public class Transaktie {

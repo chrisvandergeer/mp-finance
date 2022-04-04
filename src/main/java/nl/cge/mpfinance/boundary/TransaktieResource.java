@@ -28,10 +28,12 @@ public class TransaktieResource {
         return Response.ok(findTransaktiesController.find()).build();
     }
 
-    @Path("{volgnummer}")
+    @Path("identiek/{volgnummer}")
     @GET
-    public Response findSimilar(@PathParam("volgnummer") String volgnummer) {
-        return Response.ok(findGelijksoortigeTransaktiesController.find(volgnummer)).build();
+    public Response findSimilar(
+            @PathParam("volgnummer") String volgnummer,
+            @QueryParam("omschrijving") String omschrijving) {
+        return Response.ok(findGelijksoortigeTransaktiesController.find(volgnummer, omschrijving)).build();
     }
 
     @Path("importeer")

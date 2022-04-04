@@ -42,15 +42,14 @@ public class ImporteerTransaktiesController {
 
     private Transaktie assemble(String transaktieRegel) {
         String[] splittedTransaktieRegel = transaktieRegel.split("\",\"");
-        return Transaktie.builder()
-                .volgnr(splittedTransaktieRegel[3])
-                .datum(LocalDate.parse(splittedTransaktieRegel[4], DateTimeFormatter.ofPattern("yyyy-MM-dd")))
-                .bedrag(toBigDecimal(splittedTransaktieRegel[6]))
-                .saldoNaTrn(toBigDecimal(splittedTransaktieRegel[7]))
-                .tegenrekening(splittedTransaktieRegel[8])
-                .naamTegenpartij(splittedTransaktieRegel[9])
-                .omschrijving(splittedTransaktieRegel[19])
-                .build();
+        return new Transaktie()
+                .setVolgnr(splittedTransaktieRegel[3])
+                .setDatum(LocalDate.parse(splittedTransaktieRegel[4], DateTimeFormatter.ofPattern("yyyy-MM-dd")))
+                .setBedrag(toBigDecimal(splittedTransaktieRegel[6]))
+                .setSaldoNaTrn(toBigDecimal(splittedTransaktieRegel[7]))
+                .setTegenrekening(splittedTransaktieRegel[8])
+                .setNaamTegenpartij(splittedTransaktieRegel[9])
+                .setOmschrijving(splittedTransaktieRegel[19]);
     }
 
     private BigDecimal toBigDecimal(String bedrag) {
