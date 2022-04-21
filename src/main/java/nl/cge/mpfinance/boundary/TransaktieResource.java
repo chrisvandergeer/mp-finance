@@ -28,7 +28,18 @@ public class TransaktieResource {
         return Response.ok(findTransaktiesController.find()).build();
     }
 
-    @Path("identiek/{volgnummer}")
+    @OPTIONS
+    public Response options() {
+        return Response.ok("this is not an option").build();
+    }
+
+    @Path("{volgnummer}")
+    @OPTIONS
+    public Response options2(@PathParam("volgnummer") String volgnummer) {
+        return Response.ok("this is not an option").build();
+    }
+
+    @Path("{volgnummer}")
     @GET
     public Response findSimilar(
             @PathParam("volgnummer") String volgnummer,
