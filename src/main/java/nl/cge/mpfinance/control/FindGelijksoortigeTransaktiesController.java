@@ -37,6 +37,7 @@ public class FindGelijksoortigeTransaktiesController {
             predicateList.add(criteriaBuilder.equal(itemRoot.get("naamTegenpartij"), naamTegenpartijFilter));
         }
         criteriaQuery.where(predicateList.toArray(new Predicate[]{}));
+        criteriaQuery.orderBy(criteriaBuilder.desc(itemRoot.get("volgnr")));
         List<Transaktie> transaktieList = entityManager.createQuery(criteriaQuery).getResultList();
         return transaktiesResult.setTransakties(transaktieList);
     }

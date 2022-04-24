@@ -12,6 +12,7 @@ import static nl.cge.mpfinance.entity.Transaktie.*;
 @Accessors(chain = true)
 @Getter
 @Setter
+@ToString
 @Entity
 @Table(
         indexes = {
@@ -21,7 +22,7 @@ import static nl.cge.mpfinance.entity.Transaktie.*;
 @NamedQueries({
         @NamedQuery(
                 name = JQPL_FIND_ALL,
-                query = "select t from Transaktie t order by t.datum desc"),
+                query = "select t from Transaktie t order by t.volgnr desc"),
         @NamedQuery(
                 name = JPQL_FIND_BY_VOLGNUMMER,
                 query = "select t from Transaktie t where t.volgnr = :volgnr"

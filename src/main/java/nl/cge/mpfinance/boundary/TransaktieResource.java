@@ -5,6 +5,7 @@ import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import nl.cge.mpfinance.control.BudgeteerController;
 import nl.cge.mpfinance.control.FindGelijksoortigeTransaktiesController;
 import nl.cge.mpfinance.control.FindTransaktiesController;
 import nl.cge.mpfinance.control.ImporteerTransaktiesController;
@@ -20,6 +21,9 @@ public class TransaktieResource {
 
     @Inject
     private FindGelijksoortigeTransaktiesController findGelijksoortigeTransaktiesController;
+
+    @Inject
+    private BudgeteerController budgeteerController;
 
     @Inject
     private ImporteerTransaktiesController importeerTransaktiesController;
@@ -50,8 +54,8 @@ public class TransaktieResource {
     }
 
     @POST
-    public Response budgeteer(TransaktiesResult budgeteerCommand) {
-        System.out.println(budgeteerCommand);
+    public Response budgeteer(TransaktiesResult budgetregelMetTransakties) {
+        budgeteerController.budgeteer(budgetregelMetTransakties);
         return Response.ok().build();
     }
 
