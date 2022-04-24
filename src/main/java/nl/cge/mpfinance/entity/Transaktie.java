@@ -20,10 +20,14 @@ import static nl.cge.mpfinance.entity.Transaktie.*;
 )
 @NamedQueries({
         @NamedQuery(
-                name = JQPL_FIND_TRANSAKTIES,
+                name = JQPL_FIND_ALL,
                 query = "select t from Transaktie t order by t.datum desc"),
         @NamedQuery(
-                name = JPQL_FIND_GELIJKSOORTIGE_TRANSAKTIES,
+                name = JPQL_FIND_BY_VOLGNUMMER,
+                query = "select t from Transaktie t where t.volgnr = :volgnr"
+        ),
+        @NamedQuery(
+                name = JPQL_FIND_GELIJKSOORTIGE,
                 query = "select t from Transaktie t where t.naamTegenpartij = " +
                         "(select it.naamTegenpartij from Transaktie it where it.volgnr = :volgnummer) " +
                         "order by t.datum desc"
@@ -31,8 +35,9 @@ import static nl.cge.mpfinance.entity.Transaktie.*;
 })
 public class Transaktie {
 
-    public static final String JQPL_FIND_TRANSAKTIES = "Transaktie.findTransakties";
-    public static final String JPQL_FIND_GELIJKSOORTIGE_TRANSAKTIES = "Transaktie.findGelijksoortigeTransakties";
+    public static final String JQPL_FIND_ALL = "Transaktie.findTransakties";
+    public static final String JPQL_FIND_BY_VOLGNUMMER = "Transaktie.findByVolgnummer";
+    public static final String JPQL_FIND_GELIJKSOORTIGE = "Transaktie.findGelijksoortigeTransakties";
 
     @Id
     private String volgnr;

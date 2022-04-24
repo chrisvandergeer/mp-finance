@@ -47,9 +47,14 @@ public class ImporteerTransaktiesController {
                 .setDatum(LocalDate.parse(splittedTransaktieRegel[4], DateTimeFormatter.ofPattern("yyyy-MM-dd")))
                 .setBedrag(toBigDecimal(splittedTransaktieRegel[6]))
                 .setSaldoNaTrn(toBigDecimal(splittedTransaktieRegel[7]))
-                .setTegenrekening(splittedTransaktieRegel[8])
+                .setTegenrekening(getNullableString(splittedTransaktieRegel, 8))
                 .setNaamTegenpartij(splittedTransaktieRegel[9])
                 .setOmschrijving(splittedTransaktieRegel[19]);
+    }
+
+    private String getNullableString(String[] splittedTransaktieRegel, int idx) {
+        String result = splittedTransaktieRegel[idx];
+        return result.trim().equals("") ? null : result;
     }
 
     private BigDecimal toBigDecimal(String bedrag) {

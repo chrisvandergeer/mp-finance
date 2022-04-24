@@ -8,6 +8,7 @@ import jakarta.ws.rs.core.Response;
 import nl.cge.mpfinance.control.FindGelijksoortigeTransaktiesController;
 import nl.cge.mpfinance.control.FindTransaktiesController;
 import nl.cge.mpfinance.control.ImporteerTransaktiesController;
+import nl.cge.mpfinance.entity.TransaktiesResult;
 
 @Stateless
 @Produces(MediaType.APPLICATION_JSON)
@@ -43,8 +44,15 @@ public class TransaktieResource {
     @GET
     public Response findSimilar(
             @PathParam("volgnummer") String volgnummer,
+            @QueryParam("naamTegenpartij") String naamTegenpartij,
             @QueryParam("omschrijving") String omschrijving) {
-        return Response.ok(findGelijksoortigeTransaktiesController.find(volgnummer, omschrijving)).build();
+        return Response.ok(findGelijksoortigeTransaktiesController.find(volgnummer, naamTegenpartij, omschrijving)).build();
+    }
+
+    @POST
+    public Response budgeteer(TransaktiesResult budgeteerCommand) {
+        System.out.println(budgeteerCommand);
+        return Response.ok().build();
     }
 
     @Path("importeer")

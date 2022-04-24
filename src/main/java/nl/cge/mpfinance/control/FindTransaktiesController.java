@@ -13,7 +13,7 @@ public class FindTransaktiesController {
 
     public List<Transaktie> find() {
         return entityManager
-                        .createNamedQuery(Transaktie.JQPL_FIND_TRANSAKTIES, Transaktie.class)
+                        .createNamedQuery(Transaktie.JQPL_FIND_ALL, Transaktie.class)
                         .setMaxResults(200)
                         .getResultList();
     }
