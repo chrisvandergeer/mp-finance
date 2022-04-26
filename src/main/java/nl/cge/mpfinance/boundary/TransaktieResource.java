@@ -31,7 +31,6 @@ public class TransaktieResource {
 
     @GET
     public Response findTransakties(@BeanParam FindTransaktiesDto findTransaktiesDto) {
-        System.out.println(findTransaktiesDto);
         return Response.ok(findTransaktiesController.find(findTransaktiesDto)).build();
     }
 
