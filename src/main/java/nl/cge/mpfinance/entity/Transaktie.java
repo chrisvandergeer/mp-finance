@@ -30,7 +30,7 @@ import static nl.cge.mpfinance.entity.Transaktie.*;
         @NamedQuery(
                 name = JPQL_FIND_GELIJKSOORTIGE,
                 query = "select t from Transaktie t where t.naamTegenpartij = " +
-                        "(select it.naamTegenpartij from Transaktie it where it.volgnr = :volgnummer) " +
+                        "(select it.naamTegenpartij from Transaktie it where it.volgnr = :volgnr) " +
                         "order by t.datum desc"
         )
 })

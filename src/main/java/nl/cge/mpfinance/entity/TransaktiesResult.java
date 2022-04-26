@@ -14,5 +14,5 @@ import java.util.List;
 public class TransaktiesResult {
 
     private List<Transaktie> transakties;
-    private Budgetregel budgetregel;
+    private Budgetregel budgetregel = new Budgetregel();
 }

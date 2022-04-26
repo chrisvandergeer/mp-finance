@@ -47,10 +47,8 @@ public class TransaktieResource {
     @Path("{volgnummer}")
     @GET
     public Response findSimilar(
-            @PathParam("volgnummer") String volgnummer,
-            @QueryParam("naamTegenpartij") String naamTegenpartij,
-            @QueryParam("omschrijving") String omschrijving) {
-        return Response.ok(findGelijksoortigeTransaktiesController.find(volgnummer, naamTegenpartij, omschrijving)).build();
+            @PathParam("volgnummer") String volgnummer) {
+        return Response.ok(findGelijksoortigeTransaktiesController.find(volgnummer)).build();
     }
 
     @POST
