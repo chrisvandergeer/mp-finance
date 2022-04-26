@@ -9,7 +9,8 @@ import nl.cge.mpfinance.control.BudgeteerController;
 import nl.cge.mpfinance.control.FindGelijksoortigeTransaktiesController;
 import nl.cge.mpfinance.control.FindTransaktiesController;
 import nl.cge.mpfinance.control.ImporteerTransaktiesController;
-import nl.cge.mpfinance.entity.TransaktiesResult;
+import nl.cge.mpfinance.entity.BudgetregelMetTransaktiesDto;
+import nl.cge.mpfinance.entity.FindTransaktiesDto;
 
 @Stateless
 @Produces(MediaType.APPLICATION_JSON)
@@ -29,8 +30,29 @@ public class TransaktieResource {
     private ImporteerTransaktiesController importeerTransaktiesController;
 
     @GET
-    public Response findTransakties() {
-        return Response.ok(findTransaktiesController.find()).build();
+    public Response findTransakties(@BeanParam FindTransaktiesDto findTransaktiesDto) {
+        System.out.println(findTransaktiesDto);
+        return Response.ok(findTransaktiesController.find(findTransaktiesDto)).build();
+    }
+
+    @Path("{volgnummer}")
+    @GET
+    public Response findSimilar(
+            @PathParam("volgnummer") String volgnummer) {
+        return Response.ok(findGelijksoortigeTransaktiesController.find(volgnummer)).build();
+    }
+
+    @POST
+    public Response budgeteer(BudgetregelMetTransaktiesDto budgetregelMetTransakties) {
+        budgeteerController.budgeteer(budgetregelMetTransakties);
+        return Response.ok().build();
+    }
+
+    @Path("importeer")
+    @GET
+    public Response importeer() {
+        importeerTransaktiesController.importeer();
+        return Response.ok().build();
     }
 
     @OPTIONS
@@ -42,26 +64,6 @@ public class TransaktieResource {
     @OPTIONS
     public Response options2(@PathParam("volgnummer") String volgnummer) {
         return Response.ok("this is not an option").build();
-    }
-
-    @Path("{volgnummer}")
-    @GET
-    public Response findSimilar(
-            @PathParam("volgnummer") String volgnummer) {
-        return Response.ok(findGelijksoortigeTransaktiesController.find(volgnummer)).build();
-    }
-
-    @POST
-    public Response budgeteer(TransaktiesResult budgetregelMetTransakties) {
-        budgeteerController.budgeteer(budgetregelMetTransakties);
-        return Response.ok().build();
-    }
-
-    @Path("importeer")
-    @GET
-    public Response importeer() {
-        importeerTransaktiesController.importeer();
-        return Response.ok().build();
     }
 
 }

@@ -2,8 +2,14 @@ package nl.cge.mpfinance.control;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
+import nl.cge.mpfinance.entity.FindTransaktiesDto;
 import nl.cge.mpfinance.entity.Transaktie;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class FindTransaktiesController {
@@ -11,10 +17,24 @@ public class FindTransaktiesController {
     @PersistenceContext
     private EntityManager entityManager;
 
-    public List<Transaktie> find() {
-        return entityManager
-                        .createNamedQuery(Transaktie.JQPL_FIND_ALL, Transaktie.class)
-                        .setMaxResults(200)
-                        .getResultList();
+    public List<Transaktie> find(FindTransaktiesDto findTransaktiesDto) {
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Transaktie> criteriaQuery = criteriaBuilder.createQuery(Transaktie.class);
+        Root<Transaktie> transaktieRoot = criteriaQuery.from(Transaktie.class);
+        List<Predicate> predicateList = new ArrayList<>();
+        if (findTransaktiesDto.getTegenrekening() != null) {
+            predicateList.add(criteriaBuilder.equal(transaktieRoot.get("tegenrekening"), findTransaktiesDto.getTegenrekening()));
+        }
+        if (findTransaktiesDto.getNaamTegenpartij() != null) {
+            predicateList.add(criteriaBuilder.equal(transaktieRoot.get("naamTegenpartij"), findTransaktiesDto.getNaamTegenpartij()));
+        }
+        if (findTransaktiesDto.getOmschrijving() != null) {
+            predicateList.add(criteriaBuilder.like(transaktieRoot.get("omschrijving"), "%" + findTransaktiesDto.getOmschrijving() + "%"));
+        }
+        criteriaQuery.where(predicateList.toArray(new Predicate[]{}));
+        criteriaQuery.orderBy(criteriaBuilder.desc(transaktieRoot.get("volgnr")));
+        return entityManager.createQuery(criteriaQuery)
+                .setMaxResults(200)
+                .getResultList();
     }
 }

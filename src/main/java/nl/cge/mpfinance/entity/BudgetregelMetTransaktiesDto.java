@@ -11,7 +11,7 @@ import java.util.List;
 @Getter
 @Setter
 @ToString
-public class TransaktiesResult {
+public class BudgetregelMetTransaktiesDto {
 
     private List<Transaktie> transakties;
     private Budgetregel budgetregel = new Budgetregel();
