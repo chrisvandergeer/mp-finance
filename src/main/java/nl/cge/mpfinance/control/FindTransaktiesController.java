@@ -33,6 +33,9 @@ public class FindTransaktiesController {
         if (findTransaktiesDto.getOmschrijving() != null && !"".equals(findTransaktiesDto.getOmschrijving().trim())) {
             predicateList.add(criteriaBuilder.like(transaktieRoot.get("omschrijving"), "%" + findTransaktiesDto.getOmschrijving() + "%"));
         }
+        if (findTransaktiesDto.isAlleenNietGebudgeteerde()) {
+            predicateList.add(criteriaBuilder.isNull(transaktieRoot.get("budget")));
+        }
         criteriaQuery.where(predicateList.toArray(new Predicate[]{}));
         criteriaQuery.orderBy(criteriaBuilder.desc(transaktieRoot.get("volgnr")));
         return new BudgetregelMetTransaktiesDto().setTransakties(entityManager.createQuery(criteriaQuery)
@@ -41,6 +44,7 @@ public class FindTransaktiesController {
                 .setBudgetregel(new Budgetregel()
                         .setOmschrijving(findTransaktiesDto.getOmschrijving())
                         .setTegenrekening(findTransaktiesDto.getTegenrekening())
-                        .setNaamTegenpartij(findTransaktiesDto.getNaamTegenpartij()));
+                        .setNaamTegenpartij(findTransaktiesDto.getNaamTegenpartij())
+                        .setAlleenNietGebudgeteerde(findTransaktiesDto.isAlleenNietGebudgeteerde()));
     }
 }

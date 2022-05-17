@@ -10,6 +10,9 @@ import lombok.ToString;
 @ToString
 public class FindTransaktiesDto {
 
+    @QueryParam("alleenNietGebudgeteerde")
+    private boolean alleenNietGebudgeteerde;
+
     @QueryParam("tegenrekening")
     private String tegenrekening;
 

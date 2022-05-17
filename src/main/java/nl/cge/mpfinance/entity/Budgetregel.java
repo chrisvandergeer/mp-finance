@@ -17,4 +17,5 @@ public class Budgetregel {
     private String omschrijving;
     private String budget;
     private String soort;
+    private boolean alleenNietGebudgeteerde;
 }
