@@ -29,4 +29,8 @@ public class BudgetGroep {
     @OneToMany(fetch = FetchType.EAGER)
     @JoinColumn(name = "budgetGroep")
     private List<BudgetNaam> budgetNamen = new ArrayList<>();
+
+    public boolean bevatBudgetnaam(String budgetnaam) {
+        return budgetNamen.stream().anyMatch(b -> b.getNaam().equals(budgetnaam));
+    }
 }
