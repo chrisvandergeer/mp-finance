@@ -7,3 +7,5 @@ RUN features.sh
 COPY --chown=1001:0 target/*.war /config/apps
 
 RUN configure.sh
+
+COPY --chown=1001:0 target/liberty/wlp/usr/servers/defaultServer/jdbc/*.jar /config/jdbc/

@@ -3,6 +3,7 @@ package nl.cge.mpfinance.control;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import nl.cge.mpfinance.entity.BudgetGroep;
+import nl.cge.mpfinance.entity.BudgetGroepTotaalDto;
 import nl.cge.mpfinance.entity.BudgetGroepTotaalList;
 import nl.cge.mpfinance.entity.Transaktie;
 
@@ -17,13 +18,17 @@ public class BudgetOverzichtController {
     @PersistenceContext
     private EntityManager entityManager;
 
-    public BudgetGroepTotaalList maak() {
+    public List<BudgetGroepTotaalDto> maak() {
         BudgetGroepTotaalList budgetGroepTotaalList = new BudgetGroepTotaalList();
         List<BudgetGroep> budgetGroepList = entityManager
                 .createNamedQuery(BudgetGroep.JPQL_FIND_ALL, BudgetGroep.class)
                 .getResultList();
+        // bepalen begin en einddatum
         Transaktie meestRecenteTransaktie = findMeestRecenteTransaktie();
-        findTransaktiesVanAfgelopenJaar(meestRecenteTransaktie)
+        LocalDate begindatum = meestRecenteTransaktie.getDatum().withDayOfMonth(1).minusYears(1).plusMonths(1);
+        LocalDate einddatum = meestRecenteTransaktie.getDatum().with(TemporalAdjusters.lastDayOfMonth());
+
+        findTransaktiesVanAfgelopenJaar(begindatum, einddatum)
                 .stream()
                 .filter(t -> t.getBudget() != null && !t.getBudget().trim().equals(""))
                 .collect(Collectors.groupingBy(t -> getBudgetGroep(budgetGroepList, t)))
@@ -31,14 +36,17 @@ public class BudgetOverzichtController {
                         key,
                         t.getDatum().format(DateTimeFormatter.ofPattern("yyyy-MM")),
                         t.getBedrag())));
-        return budgetGroepTotaalList;
+
+        budgetGroepTotaalList.fillGaps(begindatum, einddatum);
+
+        return budgetGroepTotaalList.getBudgetGroepTotaalDtoList();
     }
 
-    private List<Transaktie> findTransaktiesVanAfgelopenJaar(Transaktie meestRecenteTransaktie) {
+    private List<Transaktie> findTransaktiesVanAfgelopenJaar(LocalDate begindatum, LocalDate einddatum) {
         return entityManager
                 .createNamedQuery(Transaktie.JPQL_FIND_BETWEEN_DATES, Transaktie.class)
-                .setParameter("begindatum", meestRecenteTransaktie.getDatum().withDayOfMonth(1).minusYears(1).plusMonths(1))
-                .setParameter("einddatum", meestRecenteTransaktie.getDatum().with(TemporalAdjusters.lastDayOfMonth()))
+                .setParameter("begindatum", begindatum)
+                .setParameter("einddatum", einddatum)
                 .getResultList();
     }
 

@@ -3,6 +3,7 @@ package nl.cge.mpfinance.boundary;
 import jakarta.ejb.Stateless;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.GET;
+import jakarta.ws.rs.OPTIONS;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
@@ -20,5 +21,10 @@ public class BudgetOverzichtResource {
     @GET
     public Response geefOverzicht() {
         return Response.ok(budgetOverzichtController.maak()).build();
+    }
+
+    @OPTIONS
+    public Response options() {
+        return Response.ok().build();
     }
 }

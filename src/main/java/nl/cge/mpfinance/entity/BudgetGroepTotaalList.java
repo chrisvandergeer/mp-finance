@@ -4,6 +4,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,5 +41,17 @@ public class BudgetGroepTotaalList {
         budgetGroepTotaalDto.setNaam(budgetGroepnaam);
         budgetGroepTotaalDtoList.add(budgetGroepTotaalDto);
         return budgetGroepTotaalDto;
+    }
+
+    public void fillGaps(LocalDate begindatum, LocalDate einddatum) {
+        for (LocalDate datum = begindatum; !datum.isAfter(einddatum); datum = datum.plusMonths(1)) {
+            String datumKey = datum.format(DateTimeFormatter.ofPattern("yyyy-MM"));
+            budgetGroepTotaalDtoList.forEach(bml -> {
+                boolean found = bml.getBudgetMaandTotaalDtoList().stream().anyMatch(bm -> bm.getMaand().equals(datumKey));
+                if (!found) {
+                    addBudgetMaandTotaal(bml.getNaam(), datumKey, BigDecimal.ZERO);
+                }
+            });
+        }
     }
 }
