@@ -2,10 +2,7 @@ package nl.cge.mpfinance.control;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
-import nl.cge.mpfinance.entity.BudgetGroep;
-import nl.cge.mpfinance.entity.BudgetGroepTotaalDto;
-import nl.cge.mpfinance.entity.BudgetGroepTotaalList;
-import nl.cge.mpfinance.entity.Transaktie;
+import nl.cge.mpfinance.entity.*;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -20,33 +17,76 @@ public class BudgetOverzichtController {
 
     public List<BudgetGroepTotaalDto> maak() {
         BudgetGroepTotaalList budgetGroepTotaalList = new BudgetGroepTotaalList();
-        List<BudgetGroep> budgetGroepList = entityManager
-                .createNamedQuery(BudgetGroep.JPQL_FIND_ALL, BudgetGroep.class)
-                .getResultList();
+        List<BudgetGroep> budgetGroepList = findBudgetgroepen();
         // bepalen begin en einddatum
-        Transaktie meestRecenteTransaktie = findMeestRecenteTransaktie();
-        LocalDate begindatum = meestRecenteTransaktie.getDatum().withDayOfMonth(1).minusYears(1).plusMonths(1);
-        LocalDate einddatum = meestRecenteTransaktie.getDatum().with(TemporalAdjusters.lastDayOfMonth());
-
-        findTransaktiesVanAfgelopenJaar(begindatum, einddatum)
+        Periode periode = bepaalOverzichtsPeriode();
+        findTransakties(periode)
                 .stream()
-                .filter(t -> t.getBudget() != null && !t.getBudget().trim().equals(""))
                 .collect(Collectors.groupingBy(t -> getBudgetGroep(budgetGroepList, t)))
                 .forEach((key, value) -> value.forEach(t -> budgetGroepTotaalList.addBudgetMaandTotaal(
                         key,
                         t.getDatum().format(DateTimeFormatter.ofPattern("yyyy-MM")),
                         t.getBedrag())));
-
-        budgetGroepTotaalList.fillGaps(begindatum, einddatum);
-
+        budgetGroepTotaalList.fillGaps(periode);
         return budgetGroepTotaalList.getBudgetGroepTotaalDtoList();
     }
 
-    private List<Transaktie> findTransaktiesVanAfgelopenJaar(LocalDate begindatum, LocalDate einddatum) {
+    public List<BudgetGroepTotaalDto> maak(String budgetgroepNaam) {
+        BudgetGroepTotaalList budgetGroepTotaalList = new BudgetGroepTotaalList();
+        List<String> budgetNamen = findBudgetnamenBijBudgetgroep(budgetgroepNaam);
+        Periode periode = bepaalOverzichtsPeriode();
+        findTransakties(periode, budgetNamen)
+                .stream()
+                .collect(Collectors.groupingBy(Transaktie::getBudget))
+                .forEach((key, value) -> value.forEach(t -> budgetGroepTotaalList.addBudgetMaandTotaal(
+                        key,
+                        t.getDatum().format(DateTimeFormatter.ofPattern("yyyy-MM")),
+                        t.getBedrag())));
+        budgetGroepTotaalList.fillGaps(periode);
+        return budgetGroepTotaalList.getBudgetGroepTotaalDtoList();
+    }
+
+    private List<BudgetGroep> findBudgetgroepen() {
+        List<BudgetGroep> budgetGroepList = entityManager
+                .createNamedQuery(BudgetGroep.JPQL_FIND_ALL, BudgetGroep.class)
+                .getResultList();
+        return budgetGroepList;
+    }
+
+    private List<Transaktie> findTransakties(Periode periode, List<String> budgetNamen) {
+        return entityManager
+                .createNamedQuery(Transaktie.JPQL_FIND_BY_BUDGETGROEP_BETWEEN_DATES, Transaktie.class)
+                .setParameter("begindatum", periode.getBegindatum())
+                .setParameter("einddatum", periode.getEinddatum())
+                .setParameter("budgetnamen", budgetNamen)
+                .getResultList();
+    }
+
+    private List<String> findBudgetnamenBijBudgetgroep(String budgetgroepNaam) {
+        List<String> budgetNamen = entityManager
+                .createNamedQuery(BudgetGroep.JPQL_FIND_BY_NAME, BudgetGroep.class)
+                .setParameter("budgetgroep", budgetgroepNaam)
+                .getSingleResult()
+                .getBudgetNamen()
+                .stream()
+                .map(BudgetNaam::getNaam)
+                .collect(Collectors.toList());
+        return budgetNamen;
+    }
+
+    private Periode bepaalOverzichtsPeriode() {
+        Transaktie meestRecenteTransaktie = findMeestRecenteTransaktie();
+        LocalDate begindatum = meestRecenteTransaktie.getDatum().withDayOfMonth(1).minusYears(1).plusMonths(4);
+        LocalDate einddatum = meestRecenteTransaktie.getDatum().with(TemporalAdjusters.lastDayOfMonth());
+        Periode periode = new Periode(begindatum, einddatum);
+        return periode;
+    }
+
+    private List<Transaktie> findTransakties(Periode periode) {
         return entityManager
                 .createNamedQuery(Transaktie.JPQL_FIND_BETWEEN_DATES, Transaktie.class)
-                .setParameter("begindatum", begindatum)
-                .setParameter("einddatum", einddatum)
+                .setParameter("begindatum", periode.getBegindatum())
+                .setParameter("einddatum", periode.getEinddatum())
                 .getResultList();
     }
 
@@ -54,14 +94,7 @@ public class BudgetOverzichtController {
         return budgetGroepList.stream().filter(budgetGroep -> budgetGroep.bevatBudgetnaam(transaktie.getBudget()))
                 .map(BudgetGroep::getNaam)
                 .findAny()
-                .orElse("");
-    }
-
-    private List<Transaktie> findTransaktiesVoorMaand(LocalDate begindatum) {
-        return entityManager.createNamedQuery(Transaktie.JPQL_FIND_BETWEEN_DATES, Transaktie.class)
-                .setParameter("begindatum", begindatum)
-                .setParameter("einddatum", begindatum.with(TemporalAdjusters.lastDayOfMonth()))
-                .getResultList();
+                .orElse("!geen budget!");
     }
 
     private Transaktie findMeestRecenteTransaktie() {

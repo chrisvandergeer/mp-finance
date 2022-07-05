@@ -43,8 +43,8 @@ public class BudgetGroepTotaalList {
         return budgetGroepTotaalDto;
     }
 
-    public void fillGaps(LocalDate begindatum, LocalDate einddatum) {
-        for (LocalDate datum = begindatum; !datum.isAfter(einddatum); datum = datum.plusMonths(1)) {
+    public void fillGaps(Periode periode) {
+        for (LocalDate datum = periode.getBegindatum(); !datum.isAfter(periode.getEinddatum()); datum = datum.plusMonths(1)) {
             String datumKey = datum.format(DateTimeFormatter.ofPattern("yyyy-MM"));
             budgetGroepTotaalDtoList.forEach(bml -> {
                 boolean found = bml.getBudgetMaandTotaalDtoList().stream().anyMatch(bm -> bm.getMaand().equals(datumKey));

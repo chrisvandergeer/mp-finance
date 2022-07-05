@@ -43,7 +43,12 @@ import static nl.cge.mpfinance.entity.Transaktie.*;
                 query = "select t from Transaktie t " +
                         "where t.datum >= :begindatum " +
                         "and t.datum <= :einddatum"
-        )
+        ),
+        @NamedQuery(name = JPQL_FIND_BY_BUDGETGROEP_BETWEEN_DATES,
+                query = "select t from Transaktie t " +
+                        "where t.datum >= :begindatum " +
+                        "and t.datum <= :einddatum " +
+                        "and t.budget in :budgetnamen")
 })
 public class Transaktie {
 
@@ -52,6 +57,7 @@ public class Transaktie {
     public static final String JPQL_FIND_GELIJKSOORTIGE = "Transaktie.findGelijksoortigeTransakties";
     public static final String JPQL_FIND_MEESTRECENTE_TRANSAKTIE = "Transaktie.findMeestRecenteTransaktie";
     public static final String JPQL_FIND_BETWEEN_DATES = "Transaktie.findBetweenDates";
+    public static final String JPQL_FIND_BY_BUDGETGROEP_BETWEEN_DATES = "Transaktie.findBudgetgroepBetweenDates";
 
     @Id
     private String volgnr;
