@@ -8,7 +8,7 @@
         <exclude-unlisted-classes>false</exclude-unlisted-classes>
         <properties>
             <property name="eclipselink.logging.level" value="FINEST"/>
-<!--            <property name="jakarta.persistence.schema-generation.database.action" value="drop-and-create"/>-->
+            <property name="jakarta.persistence.schema-generation.database.action" value="drop-and-create"/>
 <!--            <property name="jakarta.persistence.sql-load-script-source" value="META-INF/defaultdata.sql"/>-->
         </properties>
     </persistence-unit>

@@ -28,6 +28,7 @@
 
     <!-- To access this server from a remote client add a host attribute to the following element, e.g. host="*" -->
     <httpEndpoint id="defaultHttpEndpoint"
+                  host="*"
                   httpPort="9080"
                   httpsPort="9443" />
 
@@ -35,7 +36,7 @@
     <applicationManager autoExpand="true"/>
 
     <!-- Configures the application on a specified context root -->
-    <webApplication contextRoot="/mp-finance" location="mp-finance.war" />
+    <!-- <webApplication contextRoot="/mp-finance" location="mp-finance.war" /> -->
 
     <!-- Default SSL configuration enables trust for default certificates from the Java runtime -->
     <ssl id="defaultSSLConfig" trustDefaultCerts="true" />
@@ -46,11 +47,11 @@
                 type="javax.sql.ConnectionPoolDataSource"
                 transactional="true">
 
-        <properties serverName="localhost"
+        <properties serverName="my-postgres"
                     portNumber="5432"
-                    databaseName="chris"
-                    user="chris"
-                    password="chris"/>
+                    databaseName="postgres"
+                    user="postgres"
+                    password="mysecretpassword"/>
     </dataSource>
 
     <jdbcDriver id="postgresql-driver"

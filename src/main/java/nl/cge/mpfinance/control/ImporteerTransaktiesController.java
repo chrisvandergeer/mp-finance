@@ -17,11 +17,12 @@ import java.util.stream.Collectors;
 
 public class ImporteerTransaktiesController {
 
+    public static final String PATH_TO_TRANSAKTIE_CSVS = "/Users/Geerc01/ws/mygit/tr";
     @PersistenceContext
     private EntityManager entityManager;
 
     public void importeer() {
-        File[] files = new File("/home/chrisvandergeer/transakties").listFiles();
+        File[] files = new File(PATH_TO_TRANSAKTIE_CSVS).listFiles();
         if (files != null) {
             List<Transaktie> transaktieList = Arrays.stream(files)
                     .sorted()
